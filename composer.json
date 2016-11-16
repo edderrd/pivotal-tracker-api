@@ -1,7 +1,7 @@
 {
-    "name":         "drzippie/pivotal-tracker-api",
+    "name":         "cc-consulting/pivotal-tracker-api",
     "description":  "Library that provides a PHP interface to interact with the PivotalTracker API V5",
-    "homepage":     "https://github.com/drzippie/pivotal-tracker-api",
+    "homepage":     "https://github.com/cc-consulting/pivotal-tracker-api",
     "keywords":     ["pivotaltracker", "api", "v5"],
     "license":      "LGPL",
     "type":         "library",
