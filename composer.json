@@ -7,6 +7,11 @@
     "type":         "library",
     "authors": [
         {
+            "name": "Staff",
+            "email": "support@cccconsulting.jp",
+            "homepage": "http://www.cccconsulting.jp/"
+        },
+        {
             "name": "Antonio Cortés (DrZippie)",
             "email": "antonio@antoniocortes.com",
             "homepage": "http://www.antoniocortes.com/"
