@@ -89,6 +89,22 @@ class Client
     }
 
     /**
+     * Returns all memberships for a project.
+     *
+     * @param array $filter
+     * @return object
+     */
+    public function getMemberships( $filter = null )
+    {
+        return json_decode(
+            $this->client->get(
+                "/projects/{$this->project}/memberships",
+                $filter ? array( 'filter' => $filter ) : null
+            )
+        );
+    }
+
+    /**
      * Adds the given <b>$labels</b> to the story identified by <b>$story</b>
      * and returns the updated story instance.
      *
