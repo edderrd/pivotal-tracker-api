@@ -1,11 +1,16 @@
 {
-    "name":         "cc-consulting/pivotal-tracker-api",
+    "name":         "edderrd/pivotal-tracker-api",
     "description":  "Library that provides a PHP interface to interact with the PivotalTracker API V5",
-    "homepage":     "https://github.com/cc-consulting/pivotal-tracker-api",
+    "homepage":     "https://github.com/edderd/pivotal-tracker-api",
     "keywords":     ["pivotaltracker", "api", "v5"],
     "license":      "LGPL",
     "type":         "library",
     "authors": [
+        {
+            "name": "Edder Rojas",
+            "email": "edder.rojas@gmail.com",
+            "homepage": "http://e2r.io/"
+        },
         {
             "name": "Staff",
             "email": "support@cccconsulting.jp",
