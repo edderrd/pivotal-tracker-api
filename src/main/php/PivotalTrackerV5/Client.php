@@ -35,20 +35,32 @@ class Client
      * @var \PivotalTracker\Rest\Client
      */
     private $client;
+
     /**
-     * 
+     * Flag used to return values as array instead of objects
+     * @var boolean
+     */
+    private $asArray = false;
+    /**
+     *
      * @param string $apiKey  API Token provided by PivotalTracking
      * @param string $project Project ID
+     * @param boolean $asArray Return values as array instead of objects
      */
-    public function __construct( $apiKey, $project )
+    public function __construct($apiKey, $project, $asArray = false)
     {
-        $this->client = new Rest\Client( self::API_URL );
-        $this->client->addHeader( 'Content-type', 'application/json' );
-        $this->client->addHeader( 'X-TrackerToken',  $apiKey );
+        $this->client = new Rest\Client(self::API_URL);
+        $this->client->addHeader('Content-type', 'application/json');
+        $this->client->addHeader('X-TrackerToken', $apiKey);
         $this->project = $project;
+        $this->asArray = $asArray;
+
+        if (empty($apiKey)) {
+            throw new \InvalidArgumentException('No API key provided');
+        }
     }
 
- 
+
     /**
      * Adds a new story to PivotalTracker and returns the newly created story
      * object.
@@ -58,14 +70,14 @@ class Client
      * @param string $description
      * @return object
      */
-    public function addStory( array $story  )
+    public function addStory(array $story)
     {
-      
         return json_decode(
             $this->client->post(
                 "/projects/{$this->project}/stories",
-                json_encode( $story )
-            )
+                json_encode($story)
+            ),
+            $this->asArray
         );
     }
 
@@ -77,14 +89,14 @@ class Client
      * @param string $description
      * @return \SimpleXMLElement
      */
-    public function addTask( $storyId, $description )
+    public function addTask($storyId, $description)
     {
         return simplexml_load_string(
             $this->client->post(
                 "/projects/{$this->project}/stories/$storyId/tasks",
-                json_encode( array( 'description' => $description ) )
-                
-            )
+                json_encode([ 'description' => $description ])
+            ),
+            $this->asArray
         );
     }
 
@@ -94,13 +106,14 @@ class Client
      * @param array $filter
      * @return object
      */
-    public function getMemberships( $filter = null )
+    public function getMemberships($filter = null)
     {
         return json_decode(
             $this->client->get(
                 "/projects/{$this->project}/memberships",
-                $filter ? array( 'filter' => $filter ) : null
-            )
+                $filter ? [ 'filter' => $filter ] : null
+            ),
+            $this->asArray
         );
     }
 
@@ -112,13 +125,14 @@ class Client
      * @param array $labels
      * @return object
      */
-    public function addLabels( $storyId, array $labels )
+    public function addLabels($storyId, array $labels)
     {
         return json_decode(
             $this->client->put(
                 "/projects/{$this->project}/stories/$storyId",
-                json_encode(  $labels )
-            )
+                json_encode($labels)
+            ),
+            $this->asArray
         );
     }
 
@@ -128,13 +142,14 @@ class Client
      * @param array $filter
      * @return object
      */
-    public function getStories( $filter = null )
+    public function getStories($filter = null)
     {
         return json_decode(
             $this->client->get(
                 "/projects/{$this->project}/stories",
-                $filter ? array( 'filter' => $filter ) : null
-            )
+                $filter ? [ 'filter' => $filter ] : null
+            ),
+            $this->asArray
         );
     }
 
@@ -148,10 +163,40 @@ class Client
         return json_decode(
             $this->client->get(
                 "/projects"
-            )
+            ),
+            $this->asArray
         );
-
     }
 
-     
+    /**
+     * Returns user's information for the currently authenticated user.
+     *
+     * @return object
+     */
+    public function getMe()
+    {
+        return json_decode(
+            $this->client->get('/me'),
+            $this->asArray
+        );
+    }
+
+    /**
+     * Returns associated stories for the currently authenticated user
+     * could be overwritten by another user
+     * @param  string $username
+     * @return object
+     */
+    public function getMyWork($username = null)
+    {
+        if (!$username) {
+            $me = (object) $this->getMe();
+            if ($me->kind === 'error') {
+                throw new \InvalidArgumentException($me->error);
+            }
+            $username = $me ? $me->username : $username;
+        }
+
+        return $this->getStories("mywork:$username");
+    }
 }
